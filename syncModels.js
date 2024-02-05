@@ -152,7 +152,7 @@ async function syncModels() {
   });
 
 
-  await database.sync({ alter: true, force: true }); // false prod y true dev
+  await database.sync({ alter: false, force: false }); // false prod y true dev
 }
 
 module.exports = syncModels;

@@ -151,19 +151,27 @@ const handleOldReport = async () => {
 const Reports = () => {
   const [formData, setFormData] = useState(initFormData())
 
+  
   const handleReport = async (e) => {
-    let verifyPassword = prompt("Por favor ingresa la contraseña para generar el reporte:")
+    e.preventDefault();
+    
+    const getPassword = async () => {
+      return new Promise((resolve) => {
+        const password = prompt("Por favor ingresa la contraseña para generar el reporte:");
+        resolve(password);
+      });
+    };
+
+    const verifyPassword = await getPassword();
     const maskedPassword = "*".repeat(verifyPassword.length);
-   
-    console.log(verifyPassword)
+
     if (verifyPassword === "cata2047901*") {
-      e.preventDefault()
-      const data = await getReportDataWeek(formData)
-      createReport(data, "generalSemanal")
+      const data = await getReportDataWeek(formData);
+      createReport(data, "generalSemanal");
     } else {
-      alert("¡Contraseña incorrecta!")
+      alert("¡Contraseña incorrecta!");
     }
-  }
+  };
 
   const handleChange = ({ target }) => {
     setFormData((prev) => ({ ...prev, [target.name]: target.value }))
