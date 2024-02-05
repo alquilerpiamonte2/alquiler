@@ -59,6 +59,9 @@ const DailyReport = ({ getReportDataWeek }) => {
                 <td >
                   {data.FECHA_CREACION}
                 </td>
+                <td >
+                  {data.EMPLEADO}
+                </td>
               </tr>
             )}
           </tbody>

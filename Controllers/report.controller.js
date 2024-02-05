@@ -24,7 +24,7 @@ async function generarReporte(req, res) {
     await conexion.query('SET lc_time_names = "es_ES";');
 
     const [rowsDia] = await conexion.query(`
-      SELECT 
+     SELECT 
     DATE_FORMAT(P.FechadPago, '%d %b %Y') AS FECHA,
     OC.IdOrdenCompra AS ORDEN,
     DATE_FORMAT(AL.FechaInicialAlquiler, '%d %b %Y') AS FECHA_SALIDA,
@@ -32,15 +32,19 @@ async function generarReporte(req, res) {
     FORMAT(CASE WHEN EP.IdEstadoPago = 1 THEN P.Valor ELSE 0 END, 2) AS ABONO, 
     FORMAT(CASE WHEN EP.IdEstadoPago = 2 THEN P.Valor ELSE 0 END, 2) AS SALDO, 
     TP.Descripcion AS TIPOPAGO, 
-    P.createdAt 
+    P.createdAt,
+    CONCAT(E.Nombre, ' ', E.Apellido) AS EMPLEADO
 FROM 
     pagos AS P 
-    INNER JOIN tipopagos AS TP ON (P.IdTipoPago = TP.IdTipoPago) 
-    INNER JOIN estadopagos AS EP ON (P.IdEstadoPago = EP.IdEstadoPago) 
-    INNER JOIN ordencompras AS OC ON (P.IdOrdenCompra = OC.IdOrdenCompra) 
-    INNER JOIN alquilers AS AL ON (OC.IdAlquiler = AL.IdAlquiler)
+    INNER JOIN tipopagos AS TP ON P.IdTipoPago = TP.IdTipoPago
+    INNER JOIN estadopagos AS EP ON P.IdEstadoPago = EP.IdEstadoPago
+    INNER JOIN ordencompras AS OC ON P.IdOrdenCompra = OC.IdOrdenCompra
+    INNER JOIN alquilers AS AL ON OC.IdAlquiler = AL.IdAlquiler
+    INNER JOIN empleados AS E ON OC.IdEmpleado = E.IdEmpleado
 WHERE 
-    YEARWEEK(P.FechadPago) = YEARWEEK(CURDATE());
+    YEARWEEK(P.FechadPago) = YEARWEEK(CURDATE())
+LIMIT 0, 25;
+
     `);
 
     // Realiza la segunda consulta SQL para la hoja 'ABONOS'
@@ -153,26 +157,28 @@ const generarReporteSemanal = async (req, res) => {
     // Realiza la primera consulta SQL para la hoja 'dia'
     await conexion.query('SET lc_time_names = "es_ES";');
      const [rowsDia] = await conexion.query(`
-    
      SELECT 
-    LPAD(DATE_FORMAT(P.FechadPago, '%d %b %Y'), 15, ' ') AS FECHA,
-    LPAD(OC.IdOrdenCompra, 10, ' ') AS ORDEN,
-    LPAD(DATE_FORMAT(AL.FechaInicialAlquiler, '%d %b %Y'), 15, ' ') AS FECHA_SALIDA,
-    LPAD(FORMAT(OC.Total, 0), 15, ' ') AS VALOR_FACTURA,
-    LPAD(FORMAT(CASE WHEN EP.IdEstadoPago = 1 THEN P.Valor ELSE 0 END, 0), 15, ' ') AS ABONO, 
-    LPAD(FORMAT(CASE WHEN EP.IdEstadoPago = 2 THEN P.Valor ELSE 0 END, 0), 15, ' ') AS SALDO, 
-    LPAD(TP.Descripcion, 20, ' ') AS TIPOPAGO, 
-    LPAD(DATE_FORMAT(P.createdAt, '%d %b %Y'), 20, ' ') AS FECHA_CREACION 
-FROM 
-    pagos AS P 
-    INNER JOIN tipopagos AS TP ON (P.IdTipoPago = TP.IdTipoPago) 
-    INNER JOIN estadopagos AS EP ON (P.IdEstadoPago = EP.IdEstadoPago) 
-    INNER JOIN ordencompras AS OC ON (P.IdOrdenCompra = OC.IdOrdenCompra) 
-    INNER JOIN alquilers AS AL ON (OC.IdAlquiler = AL.IdAlquiler)
-WHERE 
-    P.FechadPago >= '${initialDate}'
-    AND P.FechadPago <= '${finalDate}'
-ORDER BY ORDEN ASC;
+     LPAD(DATE_FORMAT(P.FechadPago, '%d %b %Y'), 15, ' ') AS FECHA,
+     LPAD(OC.IdOrdenCompra, 10, ' ') AS ORDEN,
+     LPAD(DATE_FORMAT(AL.FechaInicialAlquiler, '%d %b %Y'), 15, ' ') AS FECHA_SALIDA,
+     LPAD(FORMAT(OC.Total, 0), 15, ' ') AS VALOR_FACTURA,
+     LPAD(FORMAT(CASE WHEN EP.IdEstadoPago = 1 THEN P.Valor ELSE 0 END, 0), 15, ' ') AS ABONO, 
+     LPAD(FORMAT(CASE WHEN EP.IdEstadoPago = 2 THEN P.Valor ELSE 0 END, 0), 15, ' ') AS SALDO, 
+     LPAD(TP.Descripcion, 20, ' ') AS TIPOPAGO, 
+     LPAD(DATE_FORMAT(P.createdAt, '%d %b %Y'), 20, ' ') AS FECHA_CREACION,
+     CONCAT(EM.Nombre, ' ', EM.Apellido) AS EMPLEADO
+ FROM 
+     pagos AS P 
+     INNER JOIN tipopagos AS TP ON (P.IdTipoPago = TP.IdTipoPago) 
+     INNER JOIN estadopagos AS EP ON (P.IdEstadoPago = EP.IdEstadoPago) 
+     INNER JOIN ordencompras AS OC ON (P.IdOrdenCompra = OC.IdOrdenCompra) 
+     INNER JOIN alquilers AS AL ON (OC.IdAlquiler = AL.IdAlquiler)
+     INNER JOIN empleados AS EM ON (OC.IdEmpleado = EM.IdEmpleado) -- JOIN con la tabla empleados
+ WHERE 
+     P.FechadPago >= '${initialDate}'
+     AND P.FechadPago <= '${finalDate}'
+ ORDER BY ORDEN ASC;
+ 
 
          `);
 
