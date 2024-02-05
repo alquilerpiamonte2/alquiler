@@ -16,7 +16,7 @@ const sendEmail = async (req, res) => {
 
   let mailOptions = {
     from: process.env.EMAIL,
-    to: ["cataelectronic@hotmail.com", "alquilerpiamonte1@outlook.es"],
+    to: ["cataelectronic@hotmail.com", "alquilerpiamonte1@outlook.es", "alquilerpiamonte2@outlook.es"],
     subject: `Alerta cliente reportado!`,
     html: `
       <div>

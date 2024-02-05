@@ -153,6 +153,8 @@ const Reports = () => {
 
   const handleReport = async (e) => {
     let verifyPassword = prompt("Por favor ingresa la contraseña para generar el reporte:")
+    const maskedPassword = "*".repeat(verifyPassword.length);
+   
     console.log(verifyPassword)
     if (verifyPassword === "cata2047901*") {
       e.preventDefault()

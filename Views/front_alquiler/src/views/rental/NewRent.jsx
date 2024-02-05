@@ -130,7 +130,7 @@ const NewRent = ({ updateActiveKeys, updateRentalStatus }) => {
                 placeholder={"Ingrese descripcion"}
                 id={"FechaInicialAlquiler"}
                 type={"date"}
-                name={"FechaInicialAlquiler"}
+                name={"Fecha retirado"}
                 label={"FechaInicialAlquiler"}
               />
               <InputCataComponente
@@ -139,7 +139,7 @@ const NewRent = ({ updateActiveKeys, updateRentalStatus }) => {
                 placeholder={"Ingrese descripcion"}
                 id={"FechaFinlAlquiler"}
                 type={"date"}
-                name={"FechaFinlAlquiler"}
+                name={"Fecha devolucion"}
                 label={"FechaFinlAlquiler"}
               />
 

@@ -241,9 +241,10 @@ WHERE
     SELECT FORMAT(
       (SELECT SUM(Valor) FROM pagos 
        WHERE FechadPago >= '${initialDate}' AND FechadPago <= '${finalDate}') - 
-      (SELECT SUM(Monto) FROM gastosempleados 
-       WHERE Fecha >= '${initialDate}' AND Fecha <= '${finalDate}'), 2
-  ) AS TOTAL;
+      COALESCE((SELECT SUM(Monto) FROM gastosempleados 
+                WHERE Fecha >= '${initialDate}' AND Fecha <= '${finalDate}'), 0), 2
+    ) AS TOTAL;
+    
 
 `);
 
