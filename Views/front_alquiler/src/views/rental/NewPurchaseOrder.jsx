@@ -136,15 +136,7 @@ const NewPurchaseOrder = ({
                   options={options}
                   onChange={handleSelect}
                 />
-                <InputCataComponente
-                  value={news.IdOrdenCompra}
-                  onChange={handleInput}
-                  placeholder={"Ingrese Orden Compra"}
-                  id={"IdOrdenCompra"}
-                  type={"number"}
-                  name={"IdOrdenCompra"}
-                  label={"IdOrdenCompra"}
-                />
+               
                 <ButtonCataComponente
                   type="submit"
                   className="btn btn-primary btn-block"
